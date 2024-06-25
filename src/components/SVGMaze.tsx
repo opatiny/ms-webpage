@@ -12,7 +12,7 @@ export function SVGMaze(props) {
     width: cellSize * nbCols,
     height: cellSize * nbRows,
   };
-  const svg = (
+  return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
@@ -22,6 +22,4 @@ export function SVGMaze(props) {
       {cells}
     </svg>
   );
-
-  return svg;
 }
