@@ -1,7 +1,11 @@
 import { getCells } from '../data/getCells';
 
 export function SVGMaze(props) {
-  const { cellSize, cellValues } = props;
+  const { cellSize = 50, cellValues = [] } = props;
+
+  if (cellValues.length === 0) {
+    return;
+  }
 
   const cells = getCells(props);
 
