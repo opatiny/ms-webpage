@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 
+import { Accelerometer } from '../components/Accelerometer';
 import { SVGMaze } from '../components/SVGMaze';
 
 export default function Monitoring() {
-  const [robotState, setRobotState] = useState(parseData(undefined));
+  const [robotState, setRobotState] = useState(parseData('{}'));
 
   useEffect(() => {
     const localDevelopement = false;
-    const server = localDevelopement ? 'http://192.168.1.193' : '';
+    const server = localDevelopement
+      ? 'http://192.168.1.193'
+      : 'http://172.16.19.247';
     const eventSource = new EventSource(`${server}/events`);
 
     // Whenever the connection is established between the server and the client we'll get notified
@@ -20,9 +23,16 @@ export default function Monitoring() {
     };
     // This is where we get the messages. The event is an object and we're interested in its `data` property
     eventSource.onmessage = (e) => {
-      console.log('>>>', e.data);
-      setRobotState(parseData(e.data));
+      console.log('message: ', e.data);
     };
+
+    eventSource.addEventListener(
+      'state',
+      (e) => {
+        setRobotState(parseData(e.data));
+      },
+      false,
+    );
     // Whenever we're done with the data stream we must close the connection
     return () => eventSource.close();
   }, []);
@@ -35,35 +45,42 @@ export default function Monitoring() {
       }}
     >
       <SVGMaze {...robotState} />;
+      <Accelerometer {...robotState} />
     </div>
   );
 }
 
 function parseData(data) {
+  console.log(JSON.parse(data));
+
+  const state = JSON.parse(data);
   const robotState = {
-    cellSize: 50,
-    cellValues: [
-      {
-        x: 0,
-        y: 0,
-        label: 'A',
-      },
-      {
-        x: 1,
-        y: 0,
-        label: 'B',
-      },
-      {
-        x: 0,
-        y: 1,
-        label: 'C',
-      },
-      {
-        x: 1,
-        y: 1,
-        label: 'D',
-      },
-    ],
+    robot: state,
+    maze: {
+      cellSize: 50,
+      cellValues: [
+        {
+          x: 0,
+          y: 0,
+          label: 'A',
+        },
+        {
+          x: 1,
+          y: 0,
+          label: 'B',
+        },
+        {
+          x: 0,
+          y: 1,
+          label: 'C',
+        },
+        {
+          x: 1,
+          y: 1,
+          label: 'D',
+        },
+      ],
+    },
   };
   return robotState;
 }

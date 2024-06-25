@@ -1,6 +1,7 @@
 import { getCells } from '../data/getCells';
 
 export function SVGMaze(props) {
+  props = props.maze;
   const { cellSize = 50, cellValues = [] } = props;
 
   if (cellValues.length === 0) {
