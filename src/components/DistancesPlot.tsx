@@ -1,15 +1,9 @@
 import React from 'react';
-import {
-  Annotations,
-  Axis,
-  LineSeries,
-  Plot,
-  Heading,
-  Legend,
-} from 'react-plot';
-import { Line } from 'react-plot/lib-esm/components/Annotations/Line';
+import { Axis, LineSeries, Plot, Heading, Legend } from 'react-plot';
 
 import { PlotData } from '../demo/stateUtilities';
+
+const AXIS_LIMIT = 1000; // in mm
 
 export default function DistancesPlot(plotData: PlotData) {
   return (
@@ -38,9 +32,8 @@ export default function DistancesPlot(plotData: PlotData) {
         position="left"
         label="Distance [mm]"
         displayPrimaryGridLines
-        paddingEnd={1}
-        min={-400}
-        max={400}
+        min={-AXIS_LIMIT}
+        max={AXIS_LIMIT}
       />
     </Plot>
   );

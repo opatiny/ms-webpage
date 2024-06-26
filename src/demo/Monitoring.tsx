@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import DistancesPlot from '../components/DistancesPlot';
 import { DistancesTableBasic } from '../components/DistancesTableBasic';
 import { ImuTableBasic } from '../components/ImuTableBasic';
+import OdometryPlot from '../components/OdometryPlot';
 import { SVGMaze } from '../components/SVGMaze';
 
 import { getEmptyState, updateState } from './stateUtilities';
@@ -55,6 +56,7 @@ export default function Monitoring() {
       <ImuTableBasic {...state.robot.imu} />
       <DistancesTableBasic {...state} />
       <DistancesPlot {...state.distancePlot} />
+      <OdometryPlot {...state} />
     </div>
   );
 }

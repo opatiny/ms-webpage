@@ -1,6 +1,8 @@
 const MAX_DISTANCES_DATA_LENGTH = 100;
 export const NB_DISTANCE_SENSORS = 5;
 
+const MAX_ODOMETRY_DATA_LENGTH = 100;
+
 export interface Point {
   x: number;
   y: number;
@@ -60,6 +62,7 @@ export interface State {
   robot: Robot;
   maze: Maze;
   distancePlot: PlotData;
+  odometryPlot: PlotData;
 }
 
 export function getEmptyState(): State {
@@ -105,6 +108,10 @@ export function getEmptyState(): State {
       series: getEmptySeries(NB_DISTANCE_SENSORS, MAX_DISTANCES_DATA_LENGTH),
       labels: ['Left', 'Front-left', 'Front', 'Front-right', 'Right'],
     },
+    odometryPlot: {
+      series: getEmptySeries(1, MAX_ODOMETRY_DATA_LENGTH),
+      labels: ['Position'],
+    },
   };
 
   return state;
@@ -123,6 +130,7 @@ export function updateState(previousState: State, messageString: string) {
     robot: robotState,
     maze: previousState.maze,
     distancePlot: getNewDistanceData(previousState, robotState),
+    odometryPlot: getNewOdometryData(previousState, robotState),
   };
   return state;
 }
@@ -132,7 +140,9 @@ function getNewDistanceData(previousState: State, newRobot: Robot): PlotData {
   const { distances } = newRobot;
   const time = newRobot.odometry.time;
 
-  const newSeries = getNewPlotData(distancePlot.series, time, distances);
+  const newSeries = getNewPlotData(distancePlot.series, time, distances, {
+    xFactor: 1e6,
+  });
 
   return {
     series: newSeries,
@@ -140,22 +150,45 @@ function getNewDistanceData(previousState: State, newRobot: Robot): PlotData {
   };
 }
 
+function getNewOdometryData(previousState: State, newRobot: Robot): PlotData {
+  const { odometryPlot } = previousState;
+  const { odometry } = newRobot;
+
+  const newSeries = getNewPlotData(odometryPlot.series, odometry.pose.x, [
+    odometry.pose.y,
+  ]);
+
+  return {
+    series: newSeries,
+    labels: odometryPlot.labels,
+  };
+}
+
+interface NewDataOptions {
+  xFactor?: number;
+  yFactor?: number;
+}
 function getNewPlotData(
   previousSeries: PlotSeries,
-  time: number,
-  newData: number[],
+  xData: number,
+  yData: number[],
+  options: NewDataOptions = {},
 ): PlotSeries {
+  const { xFactor = 1, yFactor = 1 } = options;
+
   const newSeries: PlotSeries = previousSeries;
 
-  for (let i = 0; i < NB_DISTANCE_SENSORS; i++) {
-    let newValue = newData[i];
+  const nbSeries = newSeries.length;
+
+  for (let i = 0; i < nbSeries; i++) {
+    let newValue = yData[i];
     if (i > 2) {
-      newValue = -newData[i];
+      newValue = -yData[i];
     }
-    newSeries[i] = [...newSeries[i], { x: time / 1e6, y: newValue }].slice(
-      1,
-      MAX_DISTANCES_DATA_LENGTH + 1,
-    );
+    newSeries[i] = [
+      ...newSeries[i],
+      { x: xData / xFactor, y: newValue / yFactor },
+    ].slice(1, MAX_DISTANCES_DATA_LENGTH + 1);
   }
 
   return newSeries;
