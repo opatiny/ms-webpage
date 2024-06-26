@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { Accelerometer } from '../components/Accelerometer';
 import { SVGMaze } from '../components/SVGMaze';
+import DistancesPlot from '../components/StaticPlot';
+
+import { getEmptyState, updateState } from './stateUtilities';
 
 export default function Monitoring() {
-  const [robotState, setRobotState] = useState(parseData('{}'));
+  const [state, setState] = useState(getEmptyState());
 
   useEffect(() => {
     const localDevelopement = false;
@@ -29,15 +32,16 @@ export default function Monitoring() {
     eventSource.addEventListener(
       'state',
       (e) => {
-        const state = parseData(e.data);
-        console.log(state);
-        setRobotState(state);
+        const newState = updateState(state, e.data);
+
+        console.log(newState);
+        setState(newState);
       },
       false,
     );
     // Whenever we're done with the data stream we must close the connection
     return () => eventSource.close();
-  }, []);
+  }, [state]);
 
   return (
     <div
@@ -46,42 +50,9 @@ export default function Monitoring() {
         overflow: 'clip',
       }}
     >
-      <SVGMaze {...robotState.maze} />;
-      <Accelerometer {...robotState.robot.imu} />
+      <SVGMaze {...state.maze} />;
+      <Accelerometer {...state.robot.imu} />
+      <DistancesPlot />
     </div>
   );
-}
-
-function parseData(data) {
-  const state = JSON.parse(data);
-
-  const robotState = {
-    robot: state,
-    maze: {
-      cellSize: 50,
-      cellValues: [
-        {
-          x: 0,
-          y: 0,
-          label: 'A',
-        },
-        {
-          x: 1,
-          y: 0,
-          label: 'B',
-        },
-        {
-          x: 0,
-          y: 1,
-          label: 'C',
-        },
-        {
-          x: 1,
-          y: 1,
-          label: 'D',
-        },
-      ],
-    },
-  };
-  return robotState;
 }
