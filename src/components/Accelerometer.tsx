@@ -1,4 +1,6 @@
-export function Accelerometer(imu) {
+import { Imu } from '../demo/stateUtilities';
+
+export function Accelerometer(imu: Imu) {
   const {
     acceleration = { x: 0, y: 0, z: 0 },
     rotation = { x: 0, y: 0, z: 0 },

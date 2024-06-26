@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { Accelerometer } from '../components/Accelerometer';
+import DistancesPlot from '../components/DistancesPlot';
+import { DistancesTableBasic } from '../components/DistancesTableBasic';
+import { ImuTableBasic } from '../components/ImuTableBasic';
 import { SVGMaze } from '../components/SVGMaze';
-import DistancesPlot from '../components/StaticPlot';
 
 import { getEmptyState, updateState } from './stateUtilities';
 
@@ -51,8 +52,9 @@ export default function Monitoring() {
       }}
     >
       <SVGMaze {...state.maze} />;
-      <Accelerometer {...state.robot.imu} />
-      <DistancesPlot />
+      <ImuTableBasic {...state.robot.imu} />
+      <DistancesTableBasic {...state} />
+      <DistancesPlot {...state.distancePlot} />
     </div>
   );
 }

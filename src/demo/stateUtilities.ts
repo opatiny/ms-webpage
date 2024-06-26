@@ -1,4 +1,5 @@
-export const MAX_DISTANCES_DATA_LENGTH = 5;
+const MAX_DISTANCES_DATA_LENGTH = 100;
+export const NB_DISTANCE_SENSORS = 5;
 
 export interface Point {
   x: number;
@@ -61,20 +62,14 @@ export interface State {
   distancePlot: PlotData;
 }
 
-interface EmptyStateOptions {
-  distancesDataLength?: number;
-}
-
-export function getEmptyState(options: EmptyStateOptions = {}): State {
-  const { distancesDataLength = 5 } = options;
-
+export function getEmptyState(): State {
   const state: State = {
     robot: {
       imu: {
         acceleration: { x: 0, y: 0, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },
       },
-      distances: new Array(5).fill(0),
+      distances: new Array(NB_DISTANCE_SENSORS).fill(0),
       odometry: {
         pose: { x: 0, y: 0, theta: 0 },
         speed: { v: 0, omega: 0 },
@@ -107,12 +102,18 @@ export function getEmptyState(options: EmptyStateOptions = {}): State {
       ],
     },
     distancePlot: {
-      series: [[], [], [], [], []],
+      series: getEmptySeries(NB_DISTANCE_SENSORS, MAX_DISTANCES_DATA_LENGTH),
       labels: ['Left', 'Front-left', 'Front', 'Front-right', 'Right'],
     },
   };
 
   return state;
+}
+
+function getEmptySeries(nbSeries, nbPoints): PlotSeries {
+  return new Array(nbSeries)
+    .fill(0)
+    .map(() => new Array(nbPoints).fill({ x: 0, y: 0 }));
 }
 
 export function updateState(previousState: State, messageString: string) {
@@ -121,17 +122,17 @@ export function updateState(previousState: State, messageString: string) {
   const state: State = {
     robot: robotState,
     maze: previousState.maze,
-    distancePlot: getDistanceData(previousState, robotState),
+    distancePlot: getNewDistanceData(previousState, robotState),
   };
   return state;
 }
 
-function getDistanceData(previousState: State, newRobot: Robot): PlotData {
+function getNewDistanceData(previousState: State, newRobot: Robot): PlotData {
   const { distancePlot } = previousState;
   const { distances } = newRobot;
   const time = newRobot.odometry.time;
 
-  const newSeries = updatePlotData(distancePlot.series, time, distances);
+  const newSeries = getNewPlotData(distancePlot.series, time, distances);
 
   return {
     series: newSeries,
@@ -139,21 +140,21 @@ function getDistanceData(previousState: State, newRobot: Robot): PlotData {
   };
 }
 
-function updatePlotData(
+function getNewPlotData(
   previousSeries: PlotSeries,
   time: number,
   newData: number[],
 ): PlotSeries {
   const newSeries: PlotSeries = previousSeries;
 
-  for (let i = 0; i < newData.length; i++) {
+  for (let i = 0; i < NB_DISTANCE_SENSORS; i++) {
     let newValue = newData[i];
     if (i > 2) {
       newValue = -newData[i];
     }
     newSeries[i] = [...newSeries[i], { x: time / 1e6, y: newValue }].slice(
-      0,
-      MAX_DISTANCES_DATA_LENGTH,
+      1,
+      MAX_DISTANCES_DATA_LENGTH + 1,
     );
   }
 
