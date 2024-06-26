@@ -29,7 +29,9 @@ export default function Monitoring() {
     eventSource.addEventListener(
       'state',
       (e) => {
-        setRobotState(parseData(e.data));
+        const state = parseData(e.data);
+        console.log(state);
+        setRobotState(state);
       },
       false,
     );
@@ -44,16 +46,15 @@ export default function Monitoring() {
         overflow: 'clip',
       }}
     >
-      <SVGMaze {...robotState} />;
-      <Accelerometer {...robotState} />
+      <SVGMaze {...robotState.maze} />;
+      <Accelerometer {...robotState.robot.imu} />
     </div>
   );
 }
 
 function parseData(data) {
-  console.log(JSON.parse(data));
-
   const state = JSON.parse(data);
+
   const robotState = {
     robot: state,
     maze: {

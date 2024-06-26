@@ -1,14 +1,13 @@
 import { getCells } from '../data/getCells';
 
-export function SVGMaze(props) {
-  props = props.maze;
-  const { cellSize = 50, cellValues = [] } = props;
+export function SVGMaze(maze) {
+  const { cellSize = 50, cellValues = [] } = maze;
 
   if (cellValues.length === 0) {
     return;
   }
 
-  const cells = getCells(props);
+  const cells = getCells(maze);
 
   const nbRows = Math.max(...cellValues.map((cellValue) => cellValue.y)) + 1;
   const nbCols = Math.max(...cellValues.map((cellValue) => cellValue.x)) + 1;

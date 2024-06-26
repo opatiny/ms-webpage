@@ -1,17 +1,20 @@
-export function Accelerometer(props) {
-  const accelerometer = props.robot.imu;
+export function Accelerometer(imu) {
+  const {
+    acceleration = { x: 0, y: 0, z: 0 },
+    rotation = { x: 0, y: 0, z: 0 },
+  } = imu;
 
   return (
     <div>
       <h1>Accelerometer</h1>
       <h2>Linear accelerations</h2>
-      <p>X: {accelerometer.acceleration.x}</p>
-      <p>Y: {accelerometer.acceleration.y}</p>
-      <p>Z: {accelerometer.acceleration.z}</p>
+      <p>X: {acceleration.x}</p>
+      <p>Y: {acceleration.y}</p>
+      <p>Z: {acceleration.z}</p>
       <h2>Angular accelerations</h2>
-      <p>X: {accelerometer.rotation.x}</p>
-      <p>Y: {accelerometer.rotation.y}</p>
-      <p>Z: {accelerometer.rotation.z}</p>
+      <p>X: {rotation.x}</p>
+      <p>Y: {rotation.y}</p>
+      <p>Z: {rotation.z}</p>
     </div>
   );
 }
