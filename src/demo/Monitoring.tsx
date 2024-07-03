@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 
+import AngSpeedControllerPlot from '../components/AngSpeedControllerPlot';
 import DistancesPlot from '../components/DistancesPlot';
 import { DistancesTable } from '../components/DistancesTable';
 import { ImuTable } from '../components/ImuTable';
+import LinSpeedControllerPlot from '../components/LinSpeedControllerPlot';
 import OdometryPlot from '../components/OdometryPlot';
 import { OdometryTable } from '../components/OdometryTable';
+import { PidParametersTable } from '../components/PidParametersTable';
 
 import { getEmptyState, updateState } from './stateUtilities';
 
@@ -63,13 +66,32 @@ export default function Monitoring() {
         </div>
       </div>
       <h2>Odometry</h2>
-
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
           <OdometryTable {...state} />
         </div>
         <div style={{ flex: 1 }}>
           <OdometryPlot {...state} />
+        </div>
+      </div>
+      <h2>Robot speed controllers</h2>
+
+      <h3>Linear speed</h3>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <PidParametersTable {...state.robot.controllers.v} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <LinSpeedControllerPlot {...state.linearSpeedControllerPlot} />
+        </div>
+      </div>
+      <h3>Angular speed</h3>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <PidParametersTable {...state.robot.controllers.omega} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <AngSpeedControllerPlot {...state.angularSpeedControllerPlot} />
         </div>
       </div>
     </div>

@@ -3,15 +3,14 @@ import { Axis, LineSeries, Plot, Heading, Legend } from 'react-plot';
 
 import { PlotData } from '../demo/stateUtilities';
 
-export default function DistancesPlot(plotData: PlotData) {
-  const {
-    series,
-    labels,
-    title = 'My plot',
-    xlabel = 'x',
-    ylabel = 'y',
-    yLimit = 100,
-  } = plotData;
+const AXIS_LIMIT = 2; // in m/s
+
+/**
+ * Component for the plot of the 5 distance sensors data.
+ * @param plotData - The plot series and labels.
+ * @returns The plot component.
+ */
+export default function LinSpeedControllerPlot(plotData: PlotData) {
   return (
     <Plot
       width={700}
@@ -19,27 +18,27 @@ export default function DistancesPlot(plotData: PlotData) {
       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
     >
       <Legend position="right" />
-      <Heading title={title} />
+      <Heading title="Linear  speed controller" />
 
-      {series.map((serie, index) => (
+      {plotData.series.map((serie, index) => (
         <LineSeries
           displayMarkers
           markerShape="circle"
           markerSize={5}
           key={index}
           data={serie}
-          label={labels[index]}
+          label={plotData.labels[index]}
         />
       ))}
 
-      <Axis id="x" position="bottom" label={xlabel} displayPrimaryGridLines />
+      <Axis id="x" position="bottom" label="Time [s]" displayPrimaryGridLines />
       <Axis
         id="y"
         position="left"
-        label={ylabel}
         displayPrimaryGridLines
-        min={-yLimit}
-        max={yLimit}
+        label="Speed [m/s], Command [-]"
+        min={-AXIS_LIMIT}
+        max={AXIS_LIMIT}
       />
     </Plot>
   );

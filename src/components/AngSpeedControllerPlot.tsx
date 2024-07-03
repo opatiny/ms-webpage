@@ -3,14 +3,14 @@ import { Axis, LineSeries, Plot, Heading, Legend } from 'react-plot';
 
 import { PlotData } from '../demo/stateUtilities';
 
-const AXIS_LIMIT = 2; // in m/s
+const AXIS_LIMIT = 5; // in rad/s
 
 /**
  * Component for the plot of the 5 distance sensors data.
  * @param plotData - The plot series and labels.
  * @returns The plot component.
  */
-export default function LinSpeedControllerPlot(plotData: PlotData) {
+export default function AngSpeedControllerPlot(plotData: PlotData) {
   return (
     <Plot
       width={700}
@@ -18,7 +18,7 @@ export default function LinSpeedControllerPlot(plotData: PlotData) {
       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
     >
       <Legend position="right" />
-      <Heading title="Distance sensors values" />
+      <Heading title="Angular speed controller" />
 
       {plotData.series.map((serie, index) => (
         <LineSeries
@@ -36,6 +36,7 @@ export default function LinSpeedControllerPlot(plotData: PlotData) {
         id="y"
         position="left"
         displayPrimaryGridLines
+        label="Speed [rad/s], Command [-]"
         min={-AXIS_LIMIT}
         max={AXIS_LIMIT}
       />

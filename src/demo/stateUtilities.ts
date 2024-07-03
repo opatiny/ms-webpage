@@ -23,6 +23,10 @@ type PlotSeries = Point[][];
 export interface PlotData {
   series: PlotSeries;
   labels: string[];
+  xlabel?: string;
+  ylabel?: string;
+  title?: string;
+  yLimit?: number;
 }
 
 export interface XyzData {
@@ -53,8 +57,16 @@ export interface Odometry {
   time: number;
 }
 
+export interface Controller {
+  target: number;
+  kp: number;
+  ki: number;
+  kd: number;
+}
+
 export interface Controllers {
-  targets: Speed;
+  v: Controller;
+  omega: Controller;
   commands: { left: number; right: number };
 }
 
@@ -78,6 +90,16 @@ export function getEmptyState(): State {
   const emptyControllerPlot = {
     series: getEmptySeries(4, MAX_CONTROLLER_DATA_LENGTH),
     labels: ['Target speed', 'Current speed', 'Left command', 'Right command'],
+    xLabel: 'Time [s]',
+    yLabel: 'Speed [m/s], Command [-]',
+    title: 'Linear speed controller',
+  };
+
+  const emptyController = {
+    target: 0,
+    kp: 0,
+    ki: 0,
+    kd: 0,
   };
 
   const state: State = {
@@ -93,7 +115,8 @@ export function getEmptyState(): State {
         time: 0,
       },
       controllers: {
-        targets: { v: 0, omega: 0 },
+        v: emptyController,
+        omega: emptyController,
         commands: { left: 0, right: 0 },
       },
     },
@@ -125,6 +148,10 @@ export function getEmptyState(): State {
     distancePlot: {
       series: getEmptySeries(NB_DISTANCE_SENSORS, MAX_DISTANCES_DATA_LENGTH),
       labels: ['Left', 'Front-left', 'Front', 'Front-right', 'Right'],
+      xlabel: 'Time [s]',
+      ylabel: 'Distance [mm]',
+      title: 'Distance sensors',
+      yLimit: 1000, // mm
     },
     odometryPlot: {
       series: getEmptySeries(1, MAX_ODOMETRY_DATA_LENGTH),
@@ -151,6 +178,8 @@ export function updateState(previousState: State, messageString: string) {
     maze: previousState.maze,
     distancePlot: getNewDistanceData(previousState, robotState),
     odometryPlot: getNewOdometryData(previousState, robotState),
+    linearSpeedControllerPlot: getNewLinSpeedData(previousState, robotState),
+    angularSpeedControllerPlot: getNewAngSpeedData(previousState, robotState),
   };
   return state;
 }
@@ -166,8 +195,8 @@ function getNewDistanceData(previousState: State, newRobot: Robot): PlotData {
   });
 
   return {
+    ...distancePlot,
     series: newSeries,
-    labels: distancePlot.labels,
   };
 }
 
@@ -183,21 +212,55 @@ function getNewOdometryData(previousState: State, newRobot: Robot): PlotData {
   );
 
   return {
+    ...odometryPlot,
     series: newSeries,
-    labels: odometryPlot.labels,
   };
 }
 
 function getNewLinSpeedData(previousState: State, newRobot: Robot): PlotData {
   const { linearSpeedControllerPlot } = previousState;
-  newRo;
-  const { c } = newRobot;
+  const { controllers, odometry } = newRobot;
   const time = newRobot.odometry.time;
+
+  const data = [
+    controllers.v.target,
+    odometry.speed.v,
+    controllers.commands.left,
+    controllers.commands.right,
+  ];
 
   const newSeries = getNewPlotData(
     linearSpeedControllerPlot.series,
     time,
-    distances,
+    data,
+    {
+      xFactor: 1e6,
+      maxDataLength: MAX_CONTROLLER_DATA_LENGTH,
+    },
+  );
+
+  return {
+    ...linearSpeedControllerPlot,
+    series: newSeries,
+  };
+}
+
+function getNewAngSpeedData(previousState: State, newRobot: Robot): PlotData {
+  const { angularSpeedControllerPlot } = previousState;
+  const { controllers, odometry } = newRobot;
+  const time = newRobot.odometry.time;
+
+  const data = [
+    controllers.omega.target,
+    odometry.speed.omega,
+    controllers.commands.left,
+    controllers.commands.right,
+  ];
+
+  const newSeries = getNewPlotData(
+    angularSpeedControllerPlot.series,
+    time,
+    data,
     {
       xFactor: 1e6,
       maxDataLength: MAX_CONTROLLER_DATA_LENGTH,
@@ -206,7 +269,7 @@ function getNewLinSpeedData(previousState: State, newRobot: Robot): PlotData {
 
   return {
     series: newSeries,
-    labels: distancePlot.labels,
+    labels: angularSpeedControllerPlot.labels,
   };
 }
 
