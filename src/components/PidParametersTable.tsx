@@ -23,6 +23,14 @@ export function PidParametersTable(controller: Controller) {
           <td>k_d</td>
           <td align="center">{controller.kd.toFixed(NB_DIGITS)}</td>
         </tr>
+        <tr>
+          <td>Target value</td>
+          <td align="center">{controller.target.toFixed(NB_DIGITS)}</td>
+        </tr>
+        <tr>
+          <td>Current value</td>
+          <td align="center">{controller.current.toFixed(NB_DIGITS)}</td>
+        </tr>
       </table>
     </div>
   );

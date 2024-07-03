@@ -24,14 +24,6 @@ export function OdometryTable(state: State) {
           <td>theta [rad]</td>
           <td align="center">{odometry.pose.theta.toFixed(NB_DIGITS)}</td>
         </tr>
-        <tr>
-          <td>v [m/s]</td>
-          <td align="center">{odometry.speed.v.toFixed(NB_DIGITS)}</td>
-        </tr>
-        <tr>
-          <td>omega [rad/s]</td>
-          <td align="center">{odometry.speed.omega.toFixed(NB_DIGITS)}</td>
-        </tr>
       </table>
     </div>
   );

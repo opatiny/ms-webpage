@@ -1,15 +1,15 @@
 import React from 'react';
 import { Axis, LineSeries, Plot, Heading, Legend } from 'react-plot';
 
-import { PlotData } from '../demo/stateUtilities';
+import { TimePlotData } from '../demo/stateUtilities';
 
-export default function DistancesPlot(plotData: PlotData) {
+export default function TimePlot(plotData: TimePlotData) {
   const {
     series,
     labels,
     title = 'My plot',
-    xlabel = 'x',
-    ylabel = 'y',
+    xLabel = 'x',
+    yLabel = 'y',
     yLimit = 100,
   } = plotData;
   return (
@@ -32,11 +32,11 @@ export default function DistancesPlot(plotData: PlotData) {
         />
       ))}
 
-      <Axis id="x" position="bottom" label={xlabel} displayPrimaryGridLines />
+      <Axis id="x" position="bottom" label={xLabel} displayPrimaryGridLines />
       <Axis
         id="y"
         position="left"
-        label={ylabel}
+        label={yLabel}
         displayPrimaryGridLines
         min={-yLimit}
         max={yLimit}

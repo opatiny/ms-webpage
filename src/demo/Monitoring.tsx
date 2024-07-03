@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import AngSpeedControllerPlot from '../components/AngSpeedControllerPlot';
-import DistancesPlot from '../components/DistancesPlot';
 import { DistancesTable } from '../components/DistancesTable';
 import { ImuTable } from '../components/ImuTable';
-import LinSpeedControllerPlot from '../components/LinSpeedControllerPlot';
 import OdometryPlot from '../components/OdometryPlot';
 import { OdometryTable } from '../components/OdometryTable';
 import { PidParametersTable } from '../components/PidParametersTable';
+import TimePlot from '../components/TimePlot';
 
 import { getEmptyState, updateState } from './stateUtilities';
 
@@ -62,7 +60,7 @@ export default function Monitoring() {
           <DistancesTable {...state} />
         </div>
         <div style={{ flex: 1 }}>
-          <DistancesPlot {...state.distancePlot} />
+          <TimePlot {...state.distancePlot} />
         </div>
       </div>
       <h2>Odometry</h2>
@@ -82,7 +80,7 @@ export default function Monitoring() {
           <PidParametersTable {...state.robot.controllers.v} />
         </div>
         <div style={{ flex: 1 }}>
-          <LinSpeedControllerPlot {...state.linearSpeedControllerPlot} />
+          <TimePlot {...state.linearSpeedControllerPlot} />
         </div>
       </div>
       <h3>Angular speed</h3>
@@ -91,7 +89,7 @@ export default function Monitoring() {
           <PidParametersTable {...state.robot.controllers.omega} />
         </div>
         <div style={{ flex: 1 }}>
-          <AngSpeedControllerPlot {...state.angularSpeedControllerPlot} />
+          <TimePlot {...state.angularSpeedControllerPlot} />
         </div>
       </div>
     </div>

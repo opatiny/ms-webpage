@@ -23,8 +23,10 @@ type PlotSeries = Point[][];
 export interface PlotData {
   series: PlotSeries;
   labels: string[];
-  xlabel?: string;
-  ylabel?: string;
+}
+export interface TimePlotData extends PlotData {
+  xLabel?: string;
+  yLabel?: string;
   title?: string;
   yLimit?: number;
 }
@@ -53,11 +55,16 @@ export interface Speed {
 
 export interface Odometry {
   pose: Pose;
-  speed: Speed;
   time: number;
 }
 
+export interface Motor {
+  command: number;
+  speed: number;
+}
+
 export interface Controller {
+  current: number;
   target: number;
   kp: number;
   ki: number;
@@ -80,23 +87,23 @@ export interface Robot {
 export interface State {
   robot: Robot;
   maze: Maze;
-  distancePlot: PlotData;
+  distancePlot: TimePlotData;
   odometryPlot: PlotData;
-  linearSpeedControllerPlot: PlotData;
-  angularSpeedControllerPlot: PlotData;
+  linearSpeedControllerPlot: TimePlotData;
+  angularSpeedControllerPlot: TimePlotData;
+  commandsPlot: TimePlotData;
+  wheelSpeedsPlot: TimePlotData;
 }
 
 export function getEmptyState(): State {
-  const emptyControllerPlot = {
-    series: getEmptySeries(4, MAX_CONTROLLER_DATA_LENGTH),
-    labels: ['Target speed', 'Current speed', 'Left command', 'Right command'],
+  const emptyControllerPlotBase = {
+    series: getEmptySeries(2, MAX_CONTROLLER_DATA_LENGTH),
+    labels: ['Target speed', 'Current speed'],
     xLabel: 'Time [s]',
-    yLabel: 'Speed [m/s], Command [-]',
-    title: 'Linear speed controller',
   };
-
-  const emptyController = {
+  const emptyController: Controller = {
     target: 0,
+    current: 0,
     kp: 0,
     ki: 0,
     kd: 0,
@@ -111,7 +118,6 @@ export function getEmptyState(): State {
       distances: new Array(NB_DISTANCE_SENSORS).fill(0),
       odometry: {
         pose: { x: 0, y: 0, theta: 0 },
-        speed: { v: 0, omega: 0 },
         time: 0,
       },
       controllers: {
@@ -148,8 +154,8 @@ export function getEmptyState(): State {
     distancePlot: {
       series: getEmptySeries(NB_DISTANCE_SENSORS, MAX_DISTANCES_DATA_LENGTH),
       labels: ['Left', 'Front-left', 'Front', 'Front-right', 'Right'],
-      xlabel: 'Time [s]',
-      ylabel: 'Distance [mm]',
+      xLabel: 'Time [s]',
+      yLabel: 'Distance [mm]',
       title: 'Distance sensors',
       yLimit: 1000, // mm
     },
@@ -157,8 +163,34 @@ export function getEmptyState(): State {
       series: getEmptySeries(1, MAX_ODOMETRY_DATA_LENGTH),
       labels: ['Position'],
     },
-    linearSpeedControllerPlot: emptyControllerPlot,
-    angularSpeedControllerPlot: emptyControllerPlot,
+    linearSpeedControllerPlot: {
+      ...emptyControllerPlotBase,
+      yLabel: 'v [m/s]',
+      title: 'Linear speed controller',
+      yLimit: 2,
+    },
+    angularSpeedControllerPlot: {
+      ...emptyControllerPlotBase,
+      yLabel: 'omega [rad/s]',
+      title: 'Angular speed controller',
+      yLimit: 30,
+    },
+    commandsPlot: {
+      series: getEmptySeries(2, MAX_CONTROLLER_DATA_LENGTH),
+      labels: ['Left', 'Right'],
+      xLabel: 'Time [s]',
+      yLabel: 'Command [-]',
+      title: 'Commands applied to the motors',
+      yLimit: 260,
+    },
+    wheelSpeedsPlot: {
+      series: getEmptySeries(2, MAX_CONTROLLER_DATA_LENGTH),
+      labels: ['Left', 'Right'],
+      xLabel: 'Time [s]',
+      yLabel: 'Speed [rpm]',
+      title: 'Wheel speeds',
+      yLimit: 600,
+    },
   };
 
   return state;
@@ -219,12 +251,12 @@ function getNewOdometryData(previousState: State, newRobot: Robot): PlotData {
 
 function getNewLinSpeedData(previousState: State, newRobot: Robot): PlotData {
   const { linearSpeedControllerPlot } = previousState;
-  const { controllers, odometry } = newRobot;
+  const { controllers } = newRobot;
   const time = newRobot.odometry.time;
 
   const data = [
     controllers.v.target,
-    odometry.speed.v,
+    controllers.v.current,
     controllers.commands.left,
     controllers.commands.right,
   ];
@@ -247,12 +279,12 @@ function getNewLinSpeedData(previousState: State, newRobot: Robot): PlotData {
 
 function getNewAngSpeedData(previousState: State, newRobot: Robot): PlotData {
   const { angularSpeedControllerPlot } = previousState;
-  const { controllers, odometry } = newRobot;
+  const { controllers } = newRobot;
   const time = newRobot.odometry.time;
 
   const data = [
     controllers.omega.target,
-    odometry.speed.omega,
+    controllers.omega.current,
     controllers.commands.left,
     controllers.commands.right,
   ];
