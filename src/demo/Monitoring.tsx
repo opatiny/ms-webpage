@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import DistancesPlot from '../components/DistancesPlot';
-import { DistancesTableBasic } from '../components/DistancesTableBasic';
-import { ImuTableBasic } from '../components/ImuTableBasic';
+import { DistancesTable } from '../components/DistancesTable';
+import { ImuTable } from '../components/ImuTable';
 import OdometryPlot from '../components/OdometryPlot';
-import { SVGMaze } from '../components/SVGMaze';
+import { OdometryTable } from '../components/OdometryTable';
 
 import { getEmptyState, updateState } from './stateUtilities';
 
@@ -48,24 +48,29 @@ export default function Monitoring() {
   return (
     <div
       style={{
-        border: '1px solid red',
         overflow: 'clip',
       }}
     >
       <h2>Accelerometer data</h2>
-      <ImuTableBasic {...state.robot.imu} />
+      <ImuTable {...state.robot.imu} />
       <h2>Distance sensors</h2>
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
-          <DistancesTableBasic {...state} />
+          <DistancesTable {...state} />
         </div>
         <div style={{ flex: 1 }}>
           <DistancesPlot {...state.distancePlot} />
         </div>
       </div>
       <h2>Odometry</h2>
-      <div style={{ flex: 1 }}>
-        <OdometryPlot {...state} />
+
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <OdometryTable {...state} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <OdometryPlot {...state} />
+        </div>
       </div>
     </div>
   );

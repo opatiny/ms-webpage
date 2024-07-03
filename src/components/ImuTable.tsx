@@ -2,7 +2,7 @@ import { Imu } from '../demo/stateUtilities';
 
 const NB_DIGITS = 2;
 
-export function ImuTableBasic(imu: Imu) {
+export function ImuTable(imu: Imu) {
   return (
     <div>
       <table>

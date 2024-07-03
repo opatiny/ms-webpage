@@ -2,6 +2,7 @@ const MAX_DISTANCES_DATA_LENGTH = 100;
 export const NB_DISTANCE_SENSORS = 5;
 
 const MAX_ODOMETRY_DATA_LENGTH = 100;
+const MAX_CONTROLLER_DATA_LENGTH = 100;
 
 export interface Point {
   x: number;
@@ -52,10 +53,16 @@ export interface Odometry {
   time: number;
 }
 
+export interface Controllers {
+  targets: Speed;
+  commands: { left: number; right: number };
+}
+
 export interface Robot {
   imu: Imu;
   distances: number[];
   odometry: Odometry;
+  controllers: Controllers;
 }
 
 export interface State {
@@ -63,9 +70,16 @@ export interface State {
   maze: Maze;
   distancePlot: PlotData;
   odometryPlot: PlotData;
+  linearSpeedControllerPlot: PlotData;
+  angularSpeedControllerPlot: PlotData;
 }
 
 export function getEmptyState(): State {
+  const emptyControllerPlot = {
+    series: getEmptySeries(4, MAX_CONTROLLER_DATA_LENGTH),
+    labels: ['Target speed', 'Current speed', 'Left command', 'Right command'],
+  };
+
   const state: State = {
     robot: {
       imu: {
@@ -77,6 +91,10 @@ export function getEmptyState(): State {
         pose: { x: 0, y: 0, theta: 0 },
         speed: { v: 0, omega: 0 },
         time: 0,
+      },
+      controllers: {
+        targets: { v: 0, omega: 0 },
+        commands: { left: 0, right: 0 },
       },
     },
     maze: {
@@ -112,6 +130,8 @@ export function getEmptyState(): State {
       series: getEmptySeries(1, MAX_ODOMETRY_DATA_LENGTH),
       labels: ['Position'],
     },
+    linearSpeedControllerPlot: emptyControllerPlot,
+    angularSpeedControllerPlot: emptyControllerPlot,
   };
 
   return state;
@@ -142,6 +162,7 @@ function getNewDistanceData(previousState: State, newRobot: Robot): PlotData {
 
   const newSeries = getNewPlotData(distancePlot.series, time, distances, {
     xFactor: 1e6,
+    maxDataLength: MAX_DISTANCES_DATA_LENGTH,
   });
 
   return {
@@ -154,9 +175,12 @@ function getNewOdometryData(previousState: State, newRobot: Robot): PlotData {
   const { odometryPlot } = previousState;
   const { odometry } = newRobot;
 
-  const newSeries = getNewPlotData(odometryPlot.series, odometry.pose.x, [
-    odometry.pose.y,
-  ]);
+  const newSeries = getNewPlotData(
+    odometryPlot.series,
+    odometry.pose.x,
+    [odometry.pose.y],
+    { maxDataLength: MAX_ODOMETRY_DATA_LENGTH },
+  );
 
   return {
     series: newSeries,
@@ -164,17 +188,58 @@ function getNewOdometryData(previousState: State, newRobot: Robot): PlotData {
   };
 }
 
-interface NewDataOptions {
-  xFactor?: number;
-  yFactor?: number;
+function getNewLinSpeedData(previousState: State, newRobot: Robot): PlotData {
+  const { linearSpeedControllerPlot } = previousState;
+  newRo;
+  const { c } = newRobot;
+  const time = newRobot.odometry.time;
+
+  const newSeries = getNewPlotData(
+    linearSpeedControllerPlot.series,
+    time,
+    distances,
+    {
+      xFactor: 1e6,
+      maxDataLength: MAX_CONTROLLER_DATA_LENGTH,
+    },
+  );
+
+  return {
+    series: newSeries,
+    labels: distancePlot.labels,
+  };
 }
+
+interface NewDataOptions {
+  /**
+   * Factor by which to divide the x data.
+   */
+  xFactor?: number;
+  /**
+   * Factor by which to divide the y data.
+   */
+  yFactor?: number;
+  /**
+   * We slice the arrays to keep only the last `maxDataLength` elements.
+   */
+  maxDataLength?: number;
+}
+
+/**
+ * Update the plot data by adding a new measurement.
+ * @param previousSeries - The previous plot data.
+ * @param xData - The new x value.
+ * @param yData - The new y values.
+ * @param options - The data options
+ * @returns The new plot data.
+ */
 function getNewPlotData(
   previousSeries: PlotSeries,
   xData: number,
   yData: number[],
   options: NewDataOptions = {},
 ): PlotSeries {
-  const { xFactor = 1, yFactor = 1 } = options;
+  const { xFactor = 1, yFactor = 1, maxDataLength = 100 } = options;
 
   const newSeries: PlotSeries = previousSeries;
 
@@ -188,7 +253,7 @@ function getNewPlotData(
     newSeries[i] = [
       ...newSeries[i],
       { x: xData / xFactor, y: newValue / yFactor },
-    ].slice(1, MAX_DISTANCES_DATA_LENGTH + 1);
+    ].slice(1, maxDataLength + 1);
   }
 
   return newSeries;

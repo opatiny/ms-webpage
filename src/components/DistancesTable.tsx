@@ -1,6 +1,6 @@
 import { State } from '../demo/stateUtilities';
 
-export function DistancesTableBasic(state: State) {
+export function DistancesTable(state: State) {
   const distances = state.robot.distances;
   const labels = state.distancePlot.labels;
 
