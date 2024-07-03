@@ -1,29 +1,30 @@
 import { Imu } from '../demo/stateUtilities';
 
+const NB_DIGITS = 2;
+
 export function ImuTableBasic(imu: Imu) {
   return (
     <div>
-      <h1>Accelerometer data</h1>
       <table>
         <tr>
           <th>Dimension</th>
-          <th>Linear </th>
-          <th>Angular</th>
+          <th>Linear [m/s^2] </th>
+          <th>Angular [rad/s]</th>
         </tr>
         <tr>
           <td>x</td>
-          <td>{imu.acceleration.x}</td>
-          <td>{imu.rotation.x}</td>
+          <td>{imu.acceleration.x.toFixed(NB_DIGITS)}</td>
+          <td>{imu.rotation.x.toFixed(NB_DIGITS)}</td>
         </tr>
         <tr>
           <td>y</td>
-          <td>{imu.acceleration.y}</td>
-          <td>{imu.rotation.y}</td>
+          <td>{imu.acceleration.y.toFixed(NB_DIGITS)}</td>
+          <td>{imu.rotation.y.toFixed(NB_DIGITS)}</td>
         </tr>
         <tr>
           <td>z</td>
-          <td>{imu.acceleration.z}</td>
-          <td>{imu.rotation.z}</td>
+          <td>{imu.acceleration.z.toFixed(NB_DIGITS)}</td>
+          <td>{imu.rotation.z.toFixed(NB_DIGITS)}</td>
         </tr>
       </table>
     </div>

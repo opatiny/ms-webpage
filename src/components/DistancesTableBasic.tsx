@@ -6,18 +6,18 @@ export function DistancesTableBasic(state: State) {
 
   return (
     <div>
-      <h1>Distance sensors</h1>
       <table>
         <tr>
-          {labels.map((label, index) => (
-            <th key={index}>{label}</th>
-          ))}
+          <th align="left"> Sensor </th>
+          <th> Distance [mm]</th>
         </tr>
-        <tr>
-          {distances.map((distance, index) => (
-            <td key={index}>{distance}</td>
-          ))}
-        </tr>
+
+        {distances.map((distance, index) => (
+          <tr key={index}>
+            <td>{labels[index]}</td>
+            <td align="center">{distance}</td>
+          </tr>
+        ))}
       </table>
     </div>
   );

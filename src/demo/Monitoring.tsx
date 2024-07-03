@@ -52,11 +52,21 @@ export default function Monitoring() {
         overflow: 'clip',
       }}
     >
-      <SVGMaze {...state.maze} />;
+      <h2>Accelerometer data</h2>
       <ImuTableBasic {...state.robot.imu} />
-      <DistancesTableBasic {...state} />
-      <DistancesPlot {...state.distancePlot} />
-      <OdometryPlot {...state} />
+      <h2>Distance sensors</h2>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <DistancesTableBasic {...state} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <DistancesPlot {...state.distancePlot} />
+        </div>
+      </div>
+      <h2>Odometry</h2>
+      <div style={{ flex: 1 }}>
+        <OdometryPlot {...state} />
+      </div>
     </div>
   );
 }
