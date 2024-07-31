@@ -1,8 +1,14 @@
-const MAX_DISTANCES_DATA_LENGTH = 100;
-export const NB_DISTANCE_SENSORS = 5;
+import {
+  getNewAngSpeedData,
+  getNewCommandsData,
+  getNewDistanceData,
+  getNewLinSpeedData,
+  getNewOdometryData,
+  getNewWheelsSpeedData,
+} from '../utilities/updatePlots';
 
-const MAX_ODOMETRY_DATA_LENGTH = 100;
-const MAX_CONTROLLER_DATA_LENGTH = 100;
+export const MAX_TIME_PLOT_DATA_LENGTH = 100;
+export const NB_DISTANCE_SENSORS = 5;
 
 export interface Point {
   x: number;
@@ -18,7 +24,7 @@ export interface Maze {
   cellValues: MazeCell[];
 }
 
-type PlotSeries = Point[][];
+export type PlotSeries = Point[][];
 
 export interface PlotData {
   series: PlotSeries;
@@ -82,6 +88,8 @@ export interface Robot {
   distances: number[];
   odometry: Odometry;
   controllers: Controllers;
+  leftMotor: Motor;
+  rightMotor: Motor;
 }
 
 export interface State {
@@ -97,7 +105,7 @@ export interface State {
 
 export function getEmptyState(): State {
   const emptyControllerPlotBase = {
-    series: getEmptySeries(2, MAX_CONTROLLER_DATA_LENGTH),
+    series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),
     labels: ['Target speed', 'Current speed'],
     xLabel: 'Time [s]',
   };
@@ -125,6 +133,8 @@ export function getEmptyState(): State {
         omega: emptyController,
         commands: { left: 0, right: 0 },
       },
+      leftMotor: { command: 0, speed: 0 },
+      rightMotor: { command: 0, speed: 0 },
     },
     maze: {
       cellSize: 50,
@@ -152,7 +162,7 @@ export function getEmptyState(): State {
       ],
     },
     distancePlot: {
-      series: getEmptySeries(NB_DISTANCE_SENSORS, MAX_DISTANCES_DATA_LENGTH),
+      series: getEmptySeries(NB_DISTANCE_SENSORS, MAX_TIME_PLOT_DATA_LENGTH),
       labels: ['Left', 'Front-left', 'Front', 'Front-right', 'Right'],
       xLabel: 'Time [s]',
       yLabel: 'Distance [mm]',
@@ -160,7 +170,7 @@ export function getEmptyState(): State {
       yLimit: 1000, // mm
     },
     odometryPlot: {
-      series: getEmptySeries(1, MAX_ODOMETRY_DATA_LENGTH),
+      series: getEmptySeries(1, MAX_TIME_PLOT_DATA_LENGTH),
       labels: ['Position'],
     },
     linearSpeedControllerPlot: {
@@ -176,15 +186,15 @@ export function getEmptyState(): State {
       yLimit: 30,
     },
     commandsPlot: {
-      series: getEmptySeries(2, MAX_CONTROLLER_DATA_LENGTH),
+      series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),
       labels: ['Left', 'Right'],
       xLabel: 'Time [s]',
       yLabel: 'Command [-]',
-      title: 'Commands applied to the motors',
+      title: 'PWM commands applied to the motors',
       yLimit: 260,
     },
     wheelSpeedsPlot: {
-      series: getEmptySeries(2, MAX_CONTROLLER_DATA_LENGTH),
+      series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),
       labels: ['Left', 'Right'],
       xLabel: 'Time [s]',
       yLabel: 'Speed [rpm]',
@@ -212,144 +222,8 @@ export function updateState(previousState: State, messageString: string) {
     odometryPlot: getNewOdometryData(previousState, robotState),
     linearSpeedControllerPlot: getNewLinSpeedData(previousState, robotState),
     angularSpeedControllerPlot: getNewAngSpeedData(previousState, robotState),
+    commandsPlot: getNewCommandsData(previousState, robotState),
+    wheelSpeedsPlot: getNewWheelsSpeedData(previousState, robotState),
   };
   return state;
-}
-
-function getNewDistanceData(previousState: State, newRobot: Robot): PlotData {
-  const { distancePlot } = previousState;
-  const { distances } = newRobot;
-  const time = newRobot.odometry.time;
-
-  const newSeries = getNewPlotData(distancePlot.series, time, distances, {
-    xFactor: 1e6,
-    maxDataLength: MAX_DISTANCES_DATA_LENGTH,
-  });
-
-  return {
-    ...distancePlot,
-    series: newSeries,
-  };
-}
-
-function getNewOdometryData(previousState: State, newRobot: Robot): PlotData {
-  const { odometryPlot } = previousState;
-  const { odometry } = newRobot;
-
-  const newSeries = getNewPlotData(
-    odometryPlot.series,
-    odometry.pose.x,
-    [odometry.pose.y],
-    { maxDataLength: MAX_ODOMETRY_DATA_LENGTH },
-  );
-
-  return {
-    ...odometryPlot,
-    series: newSeries,
-  };
-}
-
-function getNewLinSpeedData(previousState: State, newRobot: Robot): PlotData {
-  const { linearSpeedControllerPlot } = previousState;
-  const { controllers } = newRobot;
-  const time = newRobot.odometry.time;
-
-  const data = [
-    controllers.v.target,
-    controllers.v.current,
-    controllers.commands.left,
-    controllers.commands.right,
-  ];
-
-  const newSeries = getNewPlotData(
-    linearSpeedControllerPlot.series,
-    time,
-    data,
-    {
-      xFactor: 1e6,
-      maxDataLength: MAX_CONTROLLER_DATA_LENGTH,
-    },
-  );
-
-  return {
-    ...linearSpeedControllerPlot,
-    series: newSeries,
-  };
-}
-
-function getNewAngSpeedData(previousState: State, newRobot: Robot): PlotData {
-  const { angularSpeedControllerPlot } = previousState;
-  const { controllers } = newRobot;
-  const time = newRobot.odometry.time;
-
-  const data = [
-    controllers.omega.target,
-    controllers.omega.current,
-    controllers.commands.left,
-    controllers.commands.right,
-  ];
-
-  const newSeries = getNewPlotData(
-    angularSpeedControllerPlot.series,
-    time,
-    data,
-    {
-      xFactor: 1e6,
-      maxDataLength: MAX_CONTROLLER_DATA_LENGTH,
-    },
-  );
-
-  return {
-    series: newSeries,
-    labels: angularSpeedControllerPlot.labels,
-  };
-}
-
-interface NewDataOptions {
-  /**
-   * Factor by which to divide the x data.
-   */
-  xFactor?: number;
-  /**
-   * Factor by which to divide the y data.
-   */
-  yFactor?: number;
-  /**
-   * We slice the arrays to keep only the last `maxDataLength` elements.
-   */
-  maxDataLength?: number;
-}
-
-/**
- * Update the plot data by adding a new measurement.
- * @param previousSeries - The previous plot data.
- * @param xData - The new x value.
- * @param yData - The new y values.
- * @param options - The data options
- * @returns The new plot data.
- */
-function getNewPlotData(
-  previousSeries: PlotSeries,
-  xData: number,
-  yData: number[],
-  options: NewDataOptions = {},
-): PlotSeries {
-  const { xFactor = 1, yFactor = 1, maxDataLength = 100 } = options;
-
-  const newSeries: PlotSeries = previousSeries;
-
-  const nbSeries = newSeries.length;
-
-  for (let i = 0; i < nbSeries; i++) {
-    let newValue = yData[i];
-    if (i > 2) {
-      newValue = -yData[i];
-    }
-    newSeries[i] = [
-      ...newSeries[i],
-      { x: xData / xFactor, y: newValue / yFactor },
-    ].slice(1, maxDataLength + 1);
-  }
-
-  return newSeries;
 }

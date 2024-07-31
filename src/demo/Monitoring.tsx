@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 
+import { CommandTable } from '../components/CommandsTable';
 import { DistancesTable } from '../components/DistancesTable';
 import { ImuTable } from '../components/ImuTable';
 import OdometryPlot from '../components/OdometryPlot';
 import { OdometryTable } from '../components/OdometryTable';
 import { PidParametersTable } from '../components/PidParametersTable';
 import TimePlot from '../components/TimePlot';
+import { WheelsSpeedTable } from '../components/WheelsSpeedTable';
 
 import { getEmptyState, updateState } from './stateUtilities';
 
@@ -72,8 +74,8 @@ export default function Monitoring() {
           <OdometryPlot {...state} />
         </div>
       </div>
-      <h2>Robot speed controllers</h2>
 
+      <h2>Robot speed controllers</h2>
       <h3>Linear speed</h3>
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
@@ -90,6 +92,24 @@ export default function Monitoring() {
         </div>
         <div style={{ flex: 1 }}>
           <TimePlot {...state.angularSpeedControllerPlot} />
+        </div>
+      </div>
+      <h2>Motors PWM commands</h2>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <CommandTable {...state} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <TimePlot {...state.commandsPlot} />
+        </div>
+      </div>
+      <h2>Wheels speed controllers</h2>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <WheelsSpeedTable {...state} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <TimePlot {...state.wheelSpeedsPlot} />
         </div>
       </div>
     </div>

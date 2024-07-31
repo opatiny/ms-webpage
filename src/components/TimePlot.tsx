@@ -14,11 +14,11 @@ export default function TimePlot(plotData: TimePlotData) {
   } = plotData;
   return (
     <Plot
-      width={700}
+      width={600}
       height={300}
       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
     >
-      <Legend position="right" />
+      <Legend position="bottom" />
       <Heading title={title} />
 
       {series.map((serie, index) => (
