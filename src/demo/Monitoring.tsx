@@ -11,19 +11,23 @@ import { WheelsSpeedTable } from '../components/WheelsSpeedTable';
 
 import { getEmptyState, updateState } from './stateUtilities';
 
+const localDevelopement = false;
+const server = localDevelopement
+  ? 'http://192.168.1.193'
+  : 'http://172.16.19.247';
+
 export default function Monitoring() {
   const [state, setState] = useState(getEmptyState());
 
+  const [inputValue, setInputValue] = useState('');
+  const [response, setResponse] = useState('');
+
   useEffect(() => {
-    const localDevelopement = false;
-    const server = localDevelopement
-      ? 'http://192.168.1.193'
-      : 'http://172.16.19.247';
     const eventSource = new EventSource(`${server}/events`);
 
     // Whenever the connection is established between the server and the client we'll get notified
     eventSource.onopen = () => {
-      console.log('>>> Connection opened!');
+      // console.log('>>> Connection opened!');
     };
     // Made a mistake, or something bad happened on the server? We get notified here
     eventSource.onerror = (e) => {
@@ -31,7 +35,7 @@ export default function Monitoring() {
     };
     // This is where we get the messages. The event is an object and we're interested in its `data` property
     eventSource.onmessage = (e) => {
-      console.log('message: ', e.data);
+      // console.log('message: ', e.data);
     };
 
     eventSource.addEventListener(
@@ -39,14 +43,14 @@ export default function Monitoring() {
       (e) => {
         const newState = updateState(state, e.data);
 
-        console.log(newState);
+        // console.log(newState);
         setState(newState);
       },
       false,
     );
     // Whenever we're done with the data stream we must close the connection
     return () => eventSource.close();
-  }, [state]);
+  }, [state, server]);
 
   return (
     <div
@@ -54,6 +58,29 @@ export default function Monitoring() {
         overflow: 'clip',
       }}
     >
+      <div>
+        Command:
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+          onKeyDown={async (event) => {
+            if (event.key === 'Enter') {
+              await sendCommand(server, inputValue, setResponse);
+            }
+          }}
+        />
+        <button onClick={() => sendCommand(server, inputValue, setResponse)}>
+          Send
+        </button>
+        <Command command="h" label="Help" setResponse={setResponse} />
+        <Command command="ps" label="State" setResponse={setResponse} />
+        <Command command="s" label="Settings" setResponse={setResponse} />
+      </div>
+      <div>
+        <textarea cols={100} rows={10} value={response} />
+      </div>
+
       <h2>Accelerometer data</h2>
       <ImuTable {...state.robot.imu} />
       <h2>Distance sensors</h2>
@@ -113,5 +140,20 @@ export default function Monitoring() {
         </div>
       </div>
     </div>
+  );
+}
+
+async function sendCommand(server, value, setResponse) {
+  const response = await fetch(`${server}/command?value=${value}`);
+  const text = await response.text();
+  setResponse?.(text);
+}
+
+function Command(props) {
+  const { command, label, setResponse } = props;
+  return (
+    <button onClick={() => sendCommand(server, command, setResponse)}>
+      {label || command}
+    </button>
   );
 }
