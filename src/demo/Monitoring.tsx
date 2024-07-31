@@ -103,7 +103,7 @@ export default function Monitoring() {
           <TimePlot {...state.commandsPlot} />
         </div>
       </div>
-      <h2>Wheels speed controllers</h2>
+      <h2>Wheels speed</h2>
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
           <WheelsSpeedTable {...state} />

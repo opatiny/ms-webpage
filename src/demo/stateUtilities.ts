@@ -1,3 +1,5 @@
+import { LegendPosition } from 'react-plot';
+
 import {
   getNewAngSpeedData,
   getNewCommandsData,
@@ -35,6 +37,9 @@ export interface TimePlotData extends PlotData {
   yLabel?: string;
   title?: string;
   yLimit?: number;
+  legendPosition?: LegendPosition;
+  plotWidth?: number;
+  plotHeight?: number;
 }
 
 export interface XyzData {
@@ -75,6 +80,7 @@ export interface Controller {
   kp: number;
   ki: number;
   kd: number;
+  mode: boolean;
 }
 
 export interface Controllers {
@@ -104,17 +110,13 @@ export interface State {
 }
 
 export function getEmptyState(): State {
-  const emptyControllerPlotBase = {
-    series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),
-    labels: ['Target speed', 'Current speed'],
-    xLabel: 'Time [s]',
-  };
   const emptyController: Controller = {
     target: 0,
     current: 0,
     kp: 0,
     ki: 0,
     kd: 0,
+    mode: true,
   };
 
   const state: State = {
@@ -129,7 +131,7 @@ export function getEmptyState(): State {
         time: 0,
       },
       controllers: {
-        v: emptyController,
+        v: emptyController, // is the same object if we don't use the spread operator
         omega: emptyController,
         commands: { left: 0, right: 0 },
       },
@@ -168,22 +170,26 @@ export function getEmptyState(): State {
       yLabel: 'Distance [mm]',
       title: 'Distance sensors',
       yLimit: 1000, // mm
+      legendPosition: 'right',
+      plotWidth: 800,
     },
     odometryPlot: {
       series: getEmptySeries(1, MAX_TIME_PLOT_DATA_LENGTH),
       labels: ['Position'],
     },
     linearSpeedControllerPlot: {
-      ...emptyControllerPlotBase,
+      series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),
+      labels: ['Target speed', 'Current speed'],
+      yLimit: 0.5,
       yLabel: 'v [m/s]',
       title: 'Linear speed controller',
-      yLimit: 2,
     },
     angularSpeedControllerPlot: {
-      ...emptyControllerPlotBase,
+      series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),
+      labels: ['Target speed', 'Current speed'],
       yLabel: 'omega [rad/s]',
       title: 'Angular speed controller',
-      yLimit: 30,
+      yLimit: 5,
     },
     commandsPlot: {
       series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),

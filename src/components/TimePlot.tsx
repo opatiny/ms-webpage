@@ -11,16 +11,19 @@ export default function TimePlot(plotData: TimePlotData) {
     xLabel = 'x',
     yLabel = 'y',
     yLimit = 100,
+    legendPosition = 'bottom',
+    plotHeight = 300,
+    plotWidth = 600,
   } = plotData;
+
   return (
     <Plot
-      width={600}
-      height={300}
+      width={plotWidth}
+      height={plotHeight}
       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
     >
-      <Legend position="bottom" />
+      <Legend position={legendPosition} />
       <Heading title={title} />
-
       {series.map((serie, index) => (
         <LineSeries
           displayMarkers
@@ -31,7 +34,6 @@ export default function TimePlot(plotData: TimePlotData) {
           label={labels[index]}
         />
       ))}
-
       <Axis id="x" position="bottom" label={xLabel} displayPrimaryGridLines />
       <Axis
         id="y"

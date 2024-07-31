@@ -31,6 +31,10 @@ export function PidParametersTable(controller: Controller) {
           <td>Current value</td>
           <td align="center">{controller.current.toFixed(NB_DIGITS)}</td>
         </tr>
+        <tr>
+          <td>Mode</td>
+          <td align="center">{controller.mode ? 'Enabled' : 'Disabled'}</td>
+        </tr>
       </table>
     </div>
   );
