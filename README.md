@@ -56,6 +56,18 @@ const props = {
 const svg = render(props);
 ```
 
+## Build
+
+````
+npm run build
+```
+
+Serve to check result:
+```
+npx http-server
+```
+
 ## License
 
 [MIT](./LICENSE)
+````

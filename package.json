@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "check-types": "tsc --noEmit",
-    "build": "npm run tsc-esm && cheminfo-build --entry lib-esm/index.js --root MazeSVG",
+    "build": "vite build --outDir build",
     "dev": "vite",
     "clean": "rimraf lib lib-esm",
     "prettier": "prettier --check src",
@@ -42,6 +42,7 @@
     "cheminfo-build": "^1.2.0",
     "eslint-config-cheminfo-react": "^11.0.1",
     "eslint-config-cheminfo-typescript": "^12.4.0",
+    "http-server": "^14.1.1",
     "prettier": "^3.3.2",
     "typescript": "^5.5.2",
     "vite": "^5.3.1",
