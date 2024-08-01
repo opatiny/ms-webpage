@@ -9,6 +9,7 @@ import { PidParametersTable } from '../components/PidParametersTable';
 import { RobotModesTable } from '../components/RobotModesTable';
 import TimePlot from '../components/TimePlot';
 import { WheelsSpeedTable } from '../components/WheelsSpeedTable';
+import { angularPidButtons, linearPidButtons } from '../components/pidButtons';
 
 import { getEmptyState, updateState } from './stateUtilities';
 
@@ -110,7 +111,10 @@ export default function Monitoring() {
       <h3>Linear speed</h3>
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
-          <PidParametersTable {...state.robot.controllers.v} />
+          <PidParametersTable
+            controller={state.robot.controllers.v}
+            buttons={linearPidButtons}
+          />
         </div>
         <div style={{ flex: 1 }}>
           <TimePlot {...state.linearSpeedControllerPlot} />
@@ -119,7 +123,10 @@ export default function Monitoring() {
       <h3>Angular speed</h3>
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
-          <PidParametersTable {...state.robot.controllers.omega} />
+          <PidParametersTable
+            controller={state.robot.controllers.omega}
+            buttons={angularPidButtons}
+          />
         </div>
         <div style={{ flex: 1 }}>
           <TimePlot {...state.angularSpeedControllerPlot} />
