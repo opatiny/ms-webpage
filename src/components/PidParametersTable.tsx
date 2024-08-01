@@ -16,7 +16,6 @@ export function PidParametersTable(props: {
   controller: Controller;
   buttons: PidButtons;
 }) {
-  console.log(props);
   const { controller, buttons } = props;
   return (
     <div>

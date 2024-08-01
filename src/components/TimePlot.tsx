@@ -40,8 +40,8 @@ export default function TimePlot(plotData: TimePlotData) {
         position="left"
         label={yLabel}
         displayPrimaryGridLines
-        min={-yLimit}
-        max={yLimit}
+        // min={-yLimit}
+        // max={yLimit}
       />
     </Plot>
   );
