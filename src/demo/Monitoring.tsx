@@ -6,6 +6,7 @@ import { ImuTable } from '../components/ImuTable';
 import OdometryPlot from '../components/OdometryPlot';
 import { OdometryTable } from '../components/OdometryTable';
 import { PidParametersTable } from '../components/PidParametersTable';
+import { RobotModesTable } from '../components/RobotModesTable';
 import TimePlot from '../components/TimePlot';
 import { WheelsSpeedTable } from '../components/WheelsSpeedTable';
 
@@ -102,6 +103,9 @@ export default function Monitoring() {
         </div>
       </div>
 
+      <h2>Robot control mode (T)</h2>
+      <RobotModesTable />
+
       <h2>Robot speed controllers</h2>
       <h3>Linear speed</h3>
       <div style={{ display: 'flex' }}>
@@ -149,7 +153,7 @@ async function sendCommand(server, value, setResponse) {
   setResponse?.(text);
 }
 
-function Command(props) {
+export function Command(props) {
   const { command, label, setResponse } = props;
   return (
     <button onClick={() => sendCommand(server, command, setResponse)}>

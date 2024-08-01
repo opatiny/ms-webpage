@@ -10,7 +10,7 @@ In order to be able to generate the SVG on the server and on the client we need 
 
 ## Development
 
-`npm run dev` will start using vite the document index.html at the top level that will load `main.tsx`
+`npm run dev` will start using vite the document `index.html` at the top level that will load `main.tsx`
 
 ## Testing the web
 
