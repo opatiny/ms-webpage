@@ -90,6 +90,7 @@ export interface Controllers {
 }
 
 export interface Robot {
+  navigation: { mode: number };
   imu: Imu;
   distances: number[];
   odometry: Odometry;
@@ -121,6 +122,7 @@ export function getEmptyState(): State {
 
   const state: State = {
     robot: {
+      navigation: { mode: 0 },
       imu: {
         acceleration: { x: 0, y: 0, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },

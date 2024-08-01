@@ -6,7 +6,7 @@ import { ImuTable } from '../components/ImuTable';
 import OdometryPlot from '../components/OdometryPlot';
 import { OdometryTable } from '../components/OdometryTable';
 import { PidParametersTable } from '../components/PidParametersTable';
-import { RobotModesTable } from '../components/RobotModesTable';
+import { RobotModesTable, robotModes } from '../components/RobotModesTable';
 import TimePlot from '../components/TimePlot';
 import { WheelsSpeedTable } from '../components/WheelsSpeedTable';
 import { angularPidButtons, linearPidButtons } from '../components/pidButtons';
@@ -82,7 +82,6 @@ export default function Monitoring() {
       <div>
         <textarea cols={100} rows={10} value={response} />
       </div>
-
       <h2>Accelerometer data</h2>
       <ImuTable {...state.robot.imu} />
       <h2>Distance sensors</h2>
@@ -103,10 +102,9 @@ export default function Monitoring() {
           <OdometryPlot {...state} />
         </div>
       </div>
-
       <h2>Robot control mode (T)</h2>
+      <div>Current robot mode: {robotModes[state.robot.navigation.mode]}</div>
       <RobotModesTable />
-
       <h2>Robot speed controllers</h2>
       <h3>Linear speed</h3>
       <div style={{ display: 'flex' }}>

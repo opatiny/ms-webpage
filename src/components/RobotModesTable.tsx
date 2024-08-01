@@ -1,5 +1,18 @@
 import { Command } from '../demo/Monitoring';
 
+export const robotModes = [
+  'Stop',
+  'Same PWM',
+  '',
+  '',
+  '',
+  '',
+  'Stop when obstacle',
+  '',
+  'Wheels speed control',
+  'Robot speed control',
+];
+
 export function RobotModesTable() {
   return (
     <div>
