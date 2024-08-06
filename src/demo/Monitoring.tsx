@@ -96,6 +96,9 @@ export default function Monitoring() {
       <h2>Odometry</h2>
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
+          <div>
+            <Command command="Y1" label="Reset odometry" />
+          </div>
           <OdometryTable {...state} />
         </div>
         <div style={{ flex: 1 }}>
