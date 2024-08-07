@@ -53,7 +53,6 @@ export function RobotModesTable() {
             <Command command={`Q100`} label="100" />
             <Command command={`Q300`} label="300" />
             <Command command={`Q500`} label="500" />
-            <Command command={`Q1200`} label="1200" />
           </td>
           <td align="left">[rpm]</td>
           <td align="center">Q</td>
@@ -93,11 +92,13 @@ export function RobotModesTable() {
             <Command command={`Q100`} label="100" />
             <Command command={`Q300`} label="300" />
             <Command command={`Q500`} label="500" />
+            <Command command={`Q1200`} label="1200" />
             <br />
             <Command command={`V0`} label="0" />
             <Command command={`100`} label="100" />
             <Command command={`V200`} label="200" />
-            <Command command={`V300`} label="300" />
+            <Command command={`V500`} label="500" />
+            <Command command={`V1000`} label="1000" />
           </td>
           <td align="left">
             [rpm]

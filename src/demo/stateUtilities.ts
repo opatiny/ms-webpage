@@ -182,6 +182,7 @@ export function getEmptyState(): State {
     linearSpeedControllerPlot: {
       series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),
       labels: ['Target speed', 'Current speed'],
+      xLabel: 'Time [s]',
       yLimit: 0.5,
       yLabel: 'v [m/s]',
       title: 'Linear speed controller',
@@ -189,6 +190,7 @@ export function getEmptyState(): State {
     angularSpeedControllerPlot: {
       series: getEmptySeries(2, MAX_TIME_PLOT_DATA_LENGTH),
       labels: ['Target speed', 'Current speed'],
+      xLabel: 'Time [s]',
       yLabel: 'omega [rad/s]',
       title: 'Angular speed controller',
       yLimit: 5,
