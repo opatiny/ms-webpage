@@ -2,67 +2,24 @@
 
 ## Introduction
 
-This project allows to display a maze.
-
-It uses React and can be included in other project as a React component but can also be used to generate a svg.
-
-In order to be able to generate the SVG on the server and on the client we need that each element is rendered synchronously
+This repository contains a React GUI for the debug of my micromouse project: [`opatiny/micromouse`](https://github.com/opatiny/micromouse). The development of the page is done in this repository and run locally to facilitate debug. It is then built and uploaded on the robot, which will serve it as a web page over WiFi.
 
 ## Development
 
-`npm run dev` will start using vite the document `index.html` at the top level that will load `main.tsx`
-
-## Testing the web
-
-It is possible to build the project to a simple javascript file that can be imported in any webpage. This is achieved using `npm run build` and the resulting file will be placed in `dist/react-tree-svg.js`.
-
-You can then open with 'live server' test page `test/index.html` to check how it works without ReactJS.
-
-## Installation
-
-`$ npm i react-maze-svg`
-
-## Usage
-
-```js
-const { render } = require('react-maze-svg');
-
-const props = {
-  cellSize: 50,
-  cellValues: [
-    {
-      x: 0,
-      y: 0,
-      label: 'A',
-    },
-    {
-      x: 1,
-      y: 0,
-      label: 'B',
-    },
-    {
-      x: 0,
-      y: 1,
-      label: 'C',
-    },
-    {
-      x: 1,
-      y: 1,
-      label: 'D',
-    },
-  ],
-};
-
-const svg = render(props);
-```
+Use the command `npm run dev` in order to compile the project on the fly and serve it locally.
 
 ## Build
 
-````
+The project can be built into standard JS using
+
+```
 npm run build
 ```
 
+To ensure the build works whatever the IP address of the robot is, remove all occurrences of the IP in the `build/assets/index-XXX.js` file.
+
 Serve to check result:
+
 ```
 npx http-server
 ```
@@ -70,4 +27,3 @@ npx http-server
 ## License
 
 [MIT](./LICENSE)
-````
