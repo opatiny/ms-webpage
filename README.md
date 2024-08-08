@@ -23,7 +23,3 @@ Serve to check result:
 ```
 npx http-server
 ```
-
-## License
-
-[MIT](./LICENSE)
