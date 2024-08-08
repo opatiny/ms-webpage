@@ -1,4 +1,4 @@
-# react-maze-svg
+# `ms-webpage`: A debug web page for my micromouse robot
 
 ## Introduction
 
