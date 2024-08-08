@@ -1,4 +1,4 @@
-# `ms-webpage`: A debug web page for my micromouse robot
+# A debug web page for my micromouse robot
 
 ## Introduction
 
