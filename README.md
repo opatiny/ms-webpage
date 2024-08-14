@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository contains a React GUI for the debug of my micromouse project: [`opatiny/micromouse`](https://github.com/opatiny/micromouse). The development of the page is done in this repository and run locally to facilitate debug. It is then built and uploaded on the robot, which will serve it as a web page over WiFi.
+This repository contains a React GUI for the debug of my micromouse project: [`opatiny/micromouse`](https://github.com/opatiny/micromouse). The development of the page is done in this repository and run locally to facilitate debug. It is then built and uploaded on the robot, which will serve it as a web page over WiFi. The software of the robot is in a separate repository: [opatiny/ms-software](https://github.com/opatiny/ms-software).
 
 ## Development
 
